@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-require('dotenv').config()
+const express = require("express");
+const cors = require("cors");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -79,10 +79,10 @@ async function run() {
 
     // Update
 
-    app.put("/toys/:id", async(req, res) =>{
+    app.put("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-      const options = {upsert: true};
+      const options = { upsert: true };
       const updatedToy = req.body;
       const newToy = {
         $set: {
@@ -92,17 +92,17 @@ async function run() {
           price: updatedToy.price,
           Quantity: updatedToy.Quantity,
           description: updatedToy.description,
-          sub_category: updatedToy.sub_category
-        }
-      }
+          sub_category: updatedToy.sub_category,
+        },
+      };
       const result = await toyCollection.updateOne(filter, newToy, options);
       res.send(result);
     });
 
-    app.put("/added_toy/:id", async(req, res) =>{
+    app.put("/added_toy/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-      const options = {upsert: true};
+      const options = { upsert: true };
       const updatedToy = req.body;
       const newToy = {
         $set: {
@@ -112,10 +112,14 @@ async function run() {
           price: updatedToy.price,
           Quantity: updatedToy.Quantity,
           description: updatedToy.description,
-          sub_category: updatedToy.sub_category
-        }
-      }
-      const result = await AddedToyCollection.updateOne(filter, newToy, options);
+          sub_category: updatedToy.sub_category,
+        },
+      };
+      const result = await AddedToyCollection.updateOne(
+        filter,
+        newToy,
+        options
+      );
       res.send(result);
     });
 
@@ -125,7 +129,17 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await AddedToyCollection.deleteOne(query);
-      res.send(result)
+      res.send(result);
+    });
+
+    // Sorting
+
+    app.get("/descending", async (req, res) => {
+      const query = {};
+      const sort = { price: -1 };
+      const cursor = AddedToyCollection.find(query).sort(sort);
+      const result = await cursor.toArray();
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
