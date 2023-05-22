@@ -27,19 +27,53 @@ async function run() {
     await client.connect();
 
     const toyCollection = client.db("toyCollection").collection("toys");
+    const AddedToyCollection = client
+      .db("toyCollection")
+      .collection("added-toys");
+
+    // access API
 
     app.get("/toys", async (req, res) => {
-        const cursor = toyCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
-      });
-  
-      app.get('/toy/:id', async(req, res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)}
-        const result = await toyCollection.findOne(query);
-        res.send(result);
-    })
+      const cursor = toyCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/added_toy", async (req, res) => {
+      const cursor = AddedToyCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.findOne(query);
+      res.send(result);
+    });
+
+    //  Add API
+
+    app.post("/toys", async (req, res) => {
+      const toy = req.body;
+      const result = await toyCollection.insertOne(toy);
+      res.send(result);
+    });
+
+    app.post("/added_toy", async (req, res) => {
+      const toy = req.body;
+      const result = await AddedToyCollection.insertOne(toy);
+      res.send(result);
+    });
+
+    // Delete
+
+    app.delete("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
