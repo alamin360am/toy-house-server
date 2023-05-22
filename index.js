@@ -77,6 +77,48 @@ async function run() {
       res.send(result);
     });
 
+    // Update
+
+    app.put("/toys/:id", async(req, res) =>{
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = {upsert: true};
+      const updatedToy = req.body;
+      const newToy = {
+        $set: {
+          name: updatedToy.name,
+          photo: updatedToy.photo,
+          ratings: updatedToy.ratings,
+          price: updatedToy.price,
+          Quantity: updatedToy.Quantity,
+          description: updatedToy.description,
+          sub_category: updatedToy.sub_category
+        }
+      }
+      const result = await toyCollection.updateOne(filter, newToy, options);
+      res.send(result);
+    });
+
+    app.put("/added_toy/:id", async(req, res) =>{
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = {upsert: true};
+      const updatedToy = req.body;
+      const newToy = {
+        $set: {
+          name: updatedToy.name,
+          photo: updatedToy.photo,
+          ratings: updatedToy.ratings,
+          price: updatedToy.price,
+          Quantity: updatedToy.Quantity,
+          description: updatedToy.description,
+          sub_category: updatedToy.sub_category
+        }
+      }
+      const result = await AddedToyCollection.updateOne(filter, newToy, options);
+      res.send(result);
+    });
+
     // Delete
 
     app.delete("added_toy/:id", async (req, res) => {
