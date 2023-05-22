@@ -40,7 +40,12 @@ async function run() {
     });
 
     app.get("/added_toy", async (req, res) => {
-      const cursor = AddedToyCollection.find();
+      console.log(req.query.seller_email);
+      let query = {};
+      if(req.query?.seller_email) {
+        query = {seller_email: req.query.seller_email}
+      }
+      const cursor = AddedToyCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -71,7 +76,7 @@ async function run() {
     app.delete("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await toyCollection.deleteOne(query);
+      const result = await toyCollection.deleteMany(query);
       res.send(result);
     });
 
